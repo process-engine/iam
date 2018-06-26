@@ -23,12 +23,12 @@ Two things are implemented:
 
 **Usage Example:**
 
-The easiest way to get familiar with the ideas is to look at an exsample; this
-will illustrate the use and interaction, between an IAM service and the
+The easiest way to get familiar with the ideas is to look at an example; this
+will illustrate the use of and the interaction between an IAM service and the
 identity service:
 
 ```ts
-# Create the two services; will be implemented here.
+# Create the two services; will be implemented here in this repository.
 const iamService: IIAMService = new IAMService(new HttpClient(), new IdentityService(), this.config.introspectPath);
 const identityService: IIdentityService = new IdentityService();
 
@@ -49,8 +49,8 @@ iamService.ensureHasClaim(identity, 'allowd_to_read_data');
 
 ## Usage of the IAM
 
-A it's core, the IAM implementation is simple: By using the IAM service you
-will either:
+A it's core, the IAM implementation is simple; by using the IAM service's
+`ensureHasClaim()` method you will either:
 
 1. Get an Forbidden Error
 
