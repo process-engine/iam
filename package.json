@@ -3,8 +3,8 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "0.0.1",
-  "description": "Contains the process engines IAM related functions.",
+  "version": "0.1.0",
+  "description": "Contains the process engines' IAM related functions.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
@@ -13,6 +13,8 @@
     "Christian Werner <christian.werner@5minds.de>"
   ],
   "dependencies": {
+    "@essential-projects/errors_ts": "^1.2.0",
+    "@essential-projects/http_contracts": "^2.0.1",
     "@essential-projects/iam_contracts": "feature~refactor_iam_implementation",
     "loggerhythm": "^3.0.3"
   },
