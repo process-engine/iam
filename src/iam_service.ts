@@ -7,7 +7,6 @@ export class IAMService implements IIAMService {
   private httpClient: IHttpClient;
   private config: IIAMConfiguration;
 
-  private ensureHasClaimUrl: string = 'claims/ensure';
   private httpResponseOkNoContentCode: number = 204;
 
   constructor(httpClient: IHttpClient) {
@@ -29,7 +28,7 @@ export class IAMService implements IIAMService {
       },
     };
 
-    const url: string = `${this.config.claimPath}/${this.ensureHasClaimUrl}/${claimName}`;
+    const url: string = `${this.config.claimPath}/${claimName}`;
 
     const response: IResponse<any> = await this.httpClient.get<any>(url, requestAuthHeaders);
 
