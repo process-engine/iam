@@ -1,61 +1,40 @@
 import {BadRequestError, ForbiddenError} from '@essential-projects/errors_ts';
 import {IHttpClient, IRequestOptions, IResponse} from '@essential-projects/http_contracts';
-import {IIAMConfiguration, IIAMService, IIdentity, IIntrospectResponse} from '@essential-projects/iam_contracts';
+import {IIAMConfiguration, IIAMService, IIdentity} from '@essential-projects/iam_contracts';
 
 export class IAMService implements IIAMService {
 
   private httpClient: IHttpClient;
-  private credentials: string;
   private config: IIAMConfiguration;
+
+  private ensureHasClaimUrl: string = 'claims/ensure';
+  private httpResponseOkNoContentCode: number = 204;
 
   constructor(httpClient: IHttpClient) {
     this.httpClient = httpClient;
   }
 
-  public async initialize(): Promise<void> {
-    const credentialString: string = `${this.config.clientId}:${this.config.clientSecret}`;
-    this.credentials = btoa(credentialString);
-  }
-
   public async ensureHasClaim(identity: IIdentity, claimName: string): Promise<void> {
-    if (identity === null) {
+    if (!identity) {
       throw new BadRequestError('No valid identity given');
     }
 
-    if (claimName === null || claimName === '') {
+    if (!claimName || claimName === '') {
       throw new BadRequestError('No valid claimName given');
     }
 
-    const response: IIntrospectResponse = await this.requestAllClaims(identity);
-
-    let responseKeys: Array<string> = [];
-
-    if (response) {
-      responseKeys = Object.keys(response);
-    }
-
-    const hasClaim: boolean = responseKeys.includes(claimName);
-    if (!hasClaim) {
-      throw new ForbiddenError('Identity does not have the requested claim.');
-    }
-  }
-
-  private async requestAllClaims(identity: IIdentity): Promise<IIntrospectResponse> {
-
     const requestAuthHeaders: IRequestOptions = {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${this.credentials}`,
+        Authorization: `Bearer ${identity.token}`,
       },
     };
 
-    const payload: any = {
-      token: identity.token,
-    };
+    const url: string = `${this.config.claimPath}/${this.ensureHasClaimUrl}/${claimName}`;
 
-    const response: IResponse<IIntrospectResponse> =
-      await this.httpClient.post<any, IIntrospectResponse>(this.config.introspectPath, payload, requestAuthHeaders);
+    const response: IResponse<any> = await this.httpClient.get<any>(url, requestAuthHeaders);
 
-    return response.result;
+    if (response.status !== this.httpResponseOkNoContentCode) {
+      throw new ForbiddenError('Identity does not have the requested claim!');
+    }
   }
 }
