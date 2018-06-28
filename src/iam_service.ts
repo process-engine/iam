@@ -13,7 +13,7 @@ export class IAMService implements IIAMService {
     this.httpClient = httpClient;
   }
 
-  public async ensureHasClaim(identity: IIdentity, claimName: string): Promise<void> {
+  public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
     if (!identity) {
       throw new BadRequestError('No valid identity given');
     }
@@ -28,7 +28,11 @@ export class IAMService implements IIAMService {
       },
     };
 
-    const url: string = `${this.config.claimPath}/${claimName}`;
+    let url: string = `${this.config.claimPath}/${claimName}`;
+
+    if (claimValue) {
+      url += `?claimValue=${claimValue}`;
+    }
 
     const response: IResponse<any> = await this.httpClient.get<any>(url, requestAuthHeaders);
 
