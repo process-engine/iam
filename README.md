@@ -6,20 +6,20 @@ interfaces.
 
 ## Purpose
 
-The ProcessEngine will use the IAM for authorization only. The IAM contracts
-found in the essential-projects will provide a template for this.
+The ProcessEngine will use the IAM for authorization only. The contracts
+found in `essential-projects/iam_contracts` will provide a template for this.
 
 Two things are implemented:
 
 1. The IAM Service
 
-   Used for interaction with the Authority; providing a method to check if an
-   identity can be resolved to the necessary claims.
+   Used for interaction with the authority. Provides a method to check if an
+   identity can be associated with the necessary claims.
 
 2. The Identity Service
 
-   A service that known how to transform a given token (e.g. JWT) to an
-   identity, that is understood by the Authority.
+   A service that knows how to transform a given token (e.g. JWT) to an
+   identity that the authority can understand.
 
 **Usage Example:**
 
@@ -28,28 +28,28 @@ will illustrate the use of and the interaction between an IAM service and the
 identity service:
 
 ```ts
-# Create the two services; will be implemented here in this repository.
-const iamService: IIAMService = new IAMService(new HttpClient(), new IdentityService(), this.config.introspectPath);
+// Create the two services; will be implemented here in this repository.
 const identityService: IIdentityService = new IdentityService();
+const iamService: IIAMService = new IAMService(new HttpClient(), identityService, this.config.introspectPath);
 
-# Get the identity for a given JWT token.
+// Get the identity for a given JWT token.
 const token: String = "Place JWT Token here";
 const identity: IIdentity = identityService.getIdentity(token);
 
-# Will result in:
-#
-# 1. An UnauthorizedError HTTP Status code, if the identity is not logged in at the authority.
-# 2. An ForbiddenError HTTP Status code, if the identity does not have the claim.
-# 3. Nothing, if the claim and identity matches.
+// Will result in:
+//
+// 1. An UnauthorizedError HTTP Status code, if the identity is not logged in at the authority.
+// 2. An ForbiddenError HTTP Status code, if the identity does not have the claim.
+// 3. Nothing, if the claim and identity matches.
 iamService.ensureHasClaim(identity, 'allowd_to_read_data');
 
-# Place protected code here.
+// Place protected code here.
 (...)
 ```
 
 ## Usage of the IAM
 
-A it's core, the IAM implementation is simple; by using the IAM service's
+At its core, the IAM implementation is simple; by using the IAM service's
 `ensureHasClaim()` method you will either:
 
 1. Get an Forbidden Error
@@ -64,13 +64,13 @@ A it's core, the IAM implementation is simple; by using the IAM service's
 
 2. Get Nothing, if the claim and identity match.
 
-   This is the good case; if you get to the code behind
-   `iamService.ensureHasClaim()` you have clearance for the following
-   operations.
+   A 204, which resembles a happy path; if you get to the code behind
+   `iamService.ensureHasClaim()`, you have clearance to perform the
+   desired operations.
 
 ## Configuration
 
 The IAM service needs some minor configurations; it needs to know:
 
-1. It's Authority.
-1. The Client Secret.
+1. Its authority.
+1. The client secret.
