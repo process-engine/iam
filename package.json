@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Contains the process engines' IAM related functions.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@essential-projects/errors_ts": "^1.2.0",
     "@essential-projects/http_contracts": "^2.0.1",
-    "@essential-projects/iam_contracts": "feature~refactor_iam_implementation",
+    "@essential-projects/iam_contracts": "^3.0.0",
     "loggerhythm": "^3.0.3"
   },
   "devDependencies": {
