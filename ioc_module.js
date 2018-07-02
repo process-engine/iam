@@ -7,12 +7,12 @@ const {
 
 function registerInContainer(container) {
 
-  container.register('IamService', IAMService)
+  container.register('IamServiceNew', IAMService)
     .dependencies('HttpService')
     .configure('iam:iam_service')
     .singleton();
 
-  container.register('IdentityService', IdentityService)
+  container.register('IdentityServiceNew', IdentityService)
     .singleton();
 }
 
