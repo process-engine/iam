@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Contains the process engines' IAM related functions.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -32,7 +32,7 @@
     "build": "gulp build",
     "build-doc": "gulp doc",
     "lint": "gulp lint",
-    "prepare": "npm run build && npm run build-doc",
+    "prepare": "npm run build",
     "test": "gulp test"
   }
 }
