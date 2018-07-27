@@ -14,6 +14,11 @@ export class IAMService implements IIAMService {
   }
 
   public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
+    
+    if (this.config.disableClaimCheck === true) {
+      return;
+    }
+
     if (!identity) {
       throw new BadRequestError('No valid identity given');
     }
