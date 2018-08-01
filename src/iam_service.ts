@@ -15,17 +15,17 @@ export class IAMService implements IIAMService {
 
   public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
     
-    const isDummyToken: boolean = atob(identity.token) === 'dummy_token';
-    if (isDummyToken) {
-      return;
-    }
-    
     if (this.config.disableClaimCheck === true) {
       return;
     }
 
     if (!identity) {
       throw new BadRequestError('No valid identity given');
+    }
+    
+    const isDummyToken: boolean = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
+    if (isDummyToken) {
+      return;
     }
 
     if (!claimName || claimName === '') {
