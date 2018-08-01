@@ -23,9 +23,13 @@ export class IAMService implements IIAMService {
       throw new BadRequestError('No valid identity given');
     }
     
-    const isDummyToken: boolean = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
-    if (isDummyToken) {
-      return;
+    try {
+      const isDummyToken: boolean = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
+      if (isDummyToken) {
+        return;
+      }
+    } catch (error) {
+      // do nothing
     }
 
     if (!claimName || claimName === '') {
