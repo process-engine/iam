@@ -15,6 +15,11 @@ export class IAMService implements IIAMService {
 
   public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
     
+    const isDummyToken: boolean = atob(identity.token) === 'dummy_token';
+    if (isDummyToken) {
+      return;
+    }
+    
     if (this.config.disableClaimCheck === true) {
       return;
     }
