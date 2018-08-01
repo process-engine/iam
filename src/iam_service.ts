@@ -23,6 +23,7 @@ export class IAMService implements IIAMService {
       throw new BadRequestError('No valid identity given');
     }
     
+    // TODO: The dummy token check needs to be removed in the future!!
     try {
       const isDummyToken: boolean = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
       if (isDummyToken) {
