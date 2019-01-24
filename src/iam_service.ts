@@ -14,7 +14,7 @@ export class IAMService implements IIAMService {
   }
 
   public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
-    
+
     if (this.config.disableClaimCheck === true) {
       return;
     }
@@ -22,7 +22,7 @@ export class IAMService implements IIAMService {
     if (!identity) {
       throw new BadRequestError('No valid identity given');
     }
-    
+
     // TODO: The dummy token check needs to be removed in the future!!
     try {
       const isDummyToken: boolean = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
