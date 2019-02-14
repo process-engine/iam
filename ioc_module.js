@@ -8,7 +8,7 @@ const {
 function registerInContainer(container) {
 
   container.register('IamService', IAMService)
-    .dependencies('HttpService')
+    .dependencies('HttpClient')
     .configure('iam:iam_service')
     .singleton();
 
