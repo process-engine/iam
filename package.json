@@ -13,10 +13,10 @@
     "Christian Werner <christian.werner@5minds.de>"
   ],
   "dependencies": {
-    "@essential-projects/errors_ts": "~1.4.0",
-    "@essential-projects/http_contracts": "~2.3.0",
-    "@essential-projects/iam_contracts": "~3.4.0",
-    "loggerhythm": "~3.0.3"
+    "@essential-projects/errors_ts": "^1.4.0",
+    "@essential-projects/http_contracts": "^2.3.0",
+    "@essential-projects/iam_contracts": "^3.4.0",
+    "loggerhythm": "^3.0.3"
   },
   "devDependencies": {
     "@essential-projects/tslint-config": "^1.1.3",
