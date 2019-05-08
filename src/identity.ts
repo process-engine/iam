@@ -9,4 +9,5 @@ export class Identity implements IIdentity {
     this.token = token;
     this.userId = userId;
   }
+
 }
