@@ -49,7 +49,6 @@ export class IAMService implements IIAMService {
       url += `?claimValue=${claimValue}`;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await this.httpClient.get<any>(url, requestAuthHeaders);
 
     if (response.status !== this.httpResponseOkNoContentCode) {
