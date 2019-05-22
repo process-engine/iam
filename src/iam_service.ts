@@ -1,5 +1,5 @@
 import {BadRequestError, ForbiddenError} from '@essential-projects/errors_ts';
-import {IHttpClient, IRequestOptions, IResponse} from '@essential-projects/http_contracts';
+import {IHttpClient} from '@essential-projects/http_contracts';
 import {IIAMConfiguration, IIAMService, IIdentity} from '@essential-projects/iam_contracts';
 
 export class IAMService implements IIAMService {
@@ -25,7 +25,7 @@ export class IAMService implements IIAMService {
 
     // TODO: The dummy token check needs to be removed in the future!!
     try {
-      const isDummyToken: boolean = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
+      const isDummyToken = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
       if (isDummyToken) {
         return;
       }
@@ -37,22 +37,23 @@ export class IAMService implements IIAMService {
       throw new BadRequestError('No valid claimName given');
     }
 
-    const requestAuthHeaders: IRequestOptions = {
+    const requestAuthHeaders = {
       headers: {
         Authorization: `Bearer ${identity.token}`,
       },
     };
 
-    let url: string = `${this.config.claimPath}/${claimName}`;
+    let url = `${this.config.claimPath}/${claimName}`;
 
     if (claimValue) {
       url += `?claimValue=${claimValue}`;
     }
 
-    const response: IResponse<any> = await this.httpClient.get<any>(url, requestAuthHeaders);
+    const response = await this.httpClient.get<any>(url, requestAuthHeaders);
 
     if (response.status !== this.httpResponseOkNoContentCode) {
       throw new ForbiddenError('Identity does not have the requested claim!');
     }
   }
+
 }
