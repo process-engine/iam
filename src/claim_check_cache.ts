@@ -37,6 +37,8 @@ export class ClaimCheckCache {
 
   private cleanupTimer: NodeJS.Timeout;
 
+  private isEnabled = false;
+
   constructor(config: ClaimCacheConfig) {
 
     const defaultConfig: ClaimCacheConfig = {
@@ -51,10 +53,21 @@ export class ClaimCheckCache {
   }
 
   /**
+   * Returns the current enabled-status of the cache.
+   */
+  public get enabled(): boolean {
+    return this.isEnabled;
+  }
+
+  /**
    * Enables the cache and initializes periodic cleanup.
    */
   public enable(): void {
-    this.config.enabled = true;
+    if (this.isEnabled) {
+      return;
+    }
+
+    this.isEnabled = true;
 
     // Fallback is 2 minutes
     const intervalInMs = this.config && this.config.cleanupIntervalInSeconds
@@ -68,7 +81,11 @@ export class ClaimCheckCache {
    * Disables the cache and stops periodic cleanup.
    */
   public disable(): void {
-    this.config.enabled = false;
+    if (!this.isEnabled) {
+      return;
+    }
+
+    this.isEnabled = false;
     clearInterval(this.cleanupTimer);
     this.clearEntireCache();
   }
@@ -82,7 +99,7 @@ export class ClaimCheckCache {
    */
   public add(userId: string, claimName: string, hasClaim: boolean): void {
 
-    if (!this.config.enabled) {
+    if (!this.isEnabled) {
       return;
     }
 
