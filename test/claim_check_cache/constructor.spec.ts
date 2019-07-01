@@ -53,6 +53,8 @@ describe('ClaimCheckCache - new()', (): void => {
 
       should(cache.enabled).be.true();
       should(cache['config']).be.eql(configToUse);
+
+      cache.disable();
     });
 
     it('Should add entries to an enabled cache', (): void => {
@@ -68,6 +70,8 @@ describe('ClaimCheckCache - new()', (): void => {
       should.exist(cache['cache']['userId']);
 
       should(cache['cache']['userId']['claim'].userHasClaim).be.true();
+
+      cache.disable();
     });
   });
 
@@ -84,6 +88,7 @@ describe('ClaimCheckCache - new()', (): void => {
       should(cache.enabled).be.true();
       should(cache['config']).be.eql(defaultConfig);
 
+      cache.disable();
     });
 
     it('Should add entries to an enabled cache', (): void => {
@@ -96,6 +101,8 @@ describe('ClaimCheckCache - new()', (): void => {
       should.exist(cache['cache']['userId']);
 
       should(cache['cache']['userId']['claim'].userHasClaim).be.true();
+
+      cache.disable();
     });
   });
 
