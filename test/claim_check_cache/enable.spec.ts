@@ -46,7 +46,5 @@ describe('ClaimCheckCache.enable()', (): void => {
     testCache.enable();
     testCache.enable();
     testCache.enable();
-    should(testCache.enabled).be.true();
   });
-
 });
