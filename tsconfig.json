@@ -16,5 +16,6 @@
     "declarationDir": "./dist",
     "sourceMap": true,
     "experimentalDecorators": true
-  }
+  },
+  "include": ["src"]
 }
