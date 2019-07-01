@@ -88,6 +88,7 @@ export class ClaimCheckCache {
     this.isEnabled = false;
     clearInterval(this.cleanupTimer);
     this.clearEntireCache();
+    this.cleanupTimer = undefined;
   }
 
   /**
