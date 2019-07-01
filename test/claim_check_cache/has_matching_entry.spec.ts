@@ -4,7 +4,7 @@ import * as should from 'should';
 
 import {ClaimCheckCache} from '../../dist/commonjs/claim_check_cache';
 
-describe('ClaimCheckCache.get()', (): void => {
+describe('ClaimCheckCache.hasMatchingEntry()', (): void => {
 
   let testCache;
 
@@ -25,22 +25,21 @@ describe('ClaimCheckCache.get()', (): void => {
     testCache.disable();
   });
 
-  it('Should get an existing entry from an enabled cache', (): void => {
+  it('Should return true, when the looked up value exists', (): void => {
 
     testCache.add('userId', 'claim', true);
 
-    const cachedEntry = testCache.get('userId', 'claim');
+    const exists = testCache.hasMatchingEntry('userId', 'claim');
 
-    should.exist(cachedEntry);
-    should(cachedEntry.userHasClaim).be.true();
+    should(exists).be.true();
   });
 
-  it('Should return undefined, if the cache does not contain a matching entry', (): void => {
+  it('Should return false, when the looked up value does not exist', (): void => {
 
     testCache.add('userId', 'claim', true);
 
-    const cachedEntry = testCache.get('userId2', 'claim');
+    const exists = testCache.hasMatchingEntry('userId2', 'claim');
 
-    should.not.exist(cachedEntry);
+    should(exists).be.false();
   });
 });
