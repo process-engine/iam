@@ -38,7 +38,13 @@ export class ClaimCheckCache {
   private cleanupTimer: NodeJS.Timeout;
 
   constructor(config: ClaimCacheConfig) {
-    this.config = config;
+
+    const defaultConfig: ClaimCacheConfig = {
+      enabled: true,
+      cleanupIntervalInSeconds: 120,
+    };
+
+    this.config = config || defaultConfig;
     if (this.config.enabled) {
       this.enable();
     }
