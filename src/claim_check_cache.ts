@@ -49,7 +49,13 @@ export class ClaimCheckCache {
    */
   public enable(): void {
     this.config.enabled = true;
-    this.cleanupTimer = setInterval(this.removeOutdatedEntries, this.config.cleanupIntervalInSeconds * 1000);
+
+    // Fallback is 2 minutes
+    const intervalInMs = this.config && this.config.cleanupIntervalInSeconds
+      ? this.config.cleanupIntervalInSeconds * 1000
+      : 120000;
+
+    this.cleanupTimer = setInterval(this.removeOutdatedEntries, intervalInMs);
   }
 
   /**
@@ -64,9 +70,9 @@ export class ClaimCheckCache {
   /**
    * Caches the given claim check result for the given userId and claim name.
    *
-   * @param userId
-   * @param claimName
-   * @param hasClaim
+   * @param userId    The userId for which to cache a claim check result.
+   * @param claimName The name of the claim for which to cache a result.
+   * @param hasClaim  The result of the claim check to cache.
    */
   public add(userId: string, claimName: string, hasClaim: boolean): void {
 
