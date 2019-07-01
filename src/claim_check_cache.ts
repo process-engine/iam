@@ -26,6 +26,7 @@ export type CacheValue = {
 
 export type ClaimCacheConfig = {
   enabled: boolean;
+  cacheLifetimeInSeconds: number;
   cleanupIntervalInSeconds: number;
 }
 
@@ -43,6 +44,7 @@ export class ClaimCheckCache {
 
     const defaultConfig: ClaimCacheConfig = {
       enabled: true,
+      cacheLifetimeInSeconds: 300,
       cleanupIntervalInSeconds: 120,
     };
 
@@ -168,7 +170,10 @@ export class ClaimCheckCache {
 
         const claim = cachedUser[claimName];
 
-        const cacheEntryIsOutdated = now.isAfter(claim.lastCheckedAt);
+        const cacheLifeTimeInSeconds = this.config.cacheLifetimeInSeconds || 300;
+        const cacheValueExpirationTime = claim.lastCheckedAt.add(cacheLifeTimeInSeconds, 'second');
+
+        const cacheEntryIsOutdated = now.isAfter(cacheValueExpirationTime);
         if (cacheEntryIsOutdated) {
           delete cachedUser[claimName];
         }
