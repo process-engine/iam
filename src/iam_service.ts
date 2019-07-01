@@ -63,6 +63,8 @@ export class IAMService implements IIAMService {
 
     const resultFromAuthority = await this.getFromAuthority(identity.token, claimName, claimValue);
 
+    this.cache.add(identity.userId, claimName, resultFromAuthority);
+
     return resultFromAuthority;
   }
 
@@ -95,7 +97,7 @@ export class IAMService implements IIAMService {
 
     const response = await this.httpClient.get<any>(url, requestAuthHeaders);
 
-    return response.status !== this.httpResponseOkNoContentCode;
+    return response.status === this.httpResponseOkNoContentCode;
   }
 
 }
