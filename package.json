@@ -16,7 +16,8 @@
     "@essential-projects/errors_ts": "^1.4.0",
     "@essential-projects/http_contracts": "^2.3.0",
     "@essential-projects/iam_contracts": "^3.4.0",
-    "loggerhythm": "^3.0.3"
+    "loggerhythm": "^3.0.3",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@essential-projects/eslint-config": "^1.0.0",
