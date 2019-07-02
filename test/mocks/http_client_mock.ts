@@ -26,7 +26,7 @@ export class HttpClientMock {
 
   public get(url: string, authHeaders: any): any {
 
-    const urlParts = url.split('/')[1];
+    const urlParts = url.split('/');
     const claimName = urlParts[urlParts.length - 1];
 
     const userToken = authHeaders.headers.Authorization as string;
