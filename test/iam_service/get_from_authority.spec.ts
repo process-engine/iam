@@ -21,9 +21,7 @@ describe('IamService.getFromAuthority()', (): void => {
   });
 
   it('Should correctly return the claim check result received from the authority', async (): Promise<void> => {
-
     const result = await iamService.getFromAuthority('userId1', 'claim1');
-
     should(result).be.true();
   });
 
