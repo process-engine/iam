@@ -40,15 +40,15 @@ export class ClaimCheckCache {
 
   private isEnabled = false;
 
+  private readonly defaultConfig: ClaimCacheConfig = {
+    enabled: true,
+    cacheLifetimeInSeconds: 300,
+    cleanupIntervalInSeconds: 10,
+  };
+
   constructor(config: ClaimCacheConfig) {
 
-    const defaultConfig: ClaimCacheConfig = {
-      enabled: true,
-      cacheLifetimeInSeconds: 300,
-      cleanupIntervalInSeconds: 10,
-    };
-
-    this.config = config || defaultConfig;
+    this.config = config || this.defaultConfig;
     if (this.config.enabled) {
       this.enable();
     }
@@ -71,10 +71,16 @@ export class ClaimCheckCache {
 
     this.isEnabled = true;
 
-    // Fallback is 2 minutes
-    const intervalInMs = this.config && this.config.cleanupIntervalInSeconds
+    const intervalInMs = this.config.cleanupIntervalInSeconds
       ? this.config.cleanupIntervalInSeconds * 1000
-      : 10000;
+      : this.defaultConfig.cleanupIntervalInSeconds * 1000;
+
+    const cacheLifeTimeInSeconds = this.config.cacheLifetimeInSeconds || this.defaultConfig.cacheLifetimeInSeconds;
+
+    const cachedValuesDoNotExpire = intervalInMs === 0 || cacheLifeTimeInSeconds === 0;
+    if (cachedValuesDoNotExpire) {
+      return;
+    }
 
     this.cleanupTimer = setInterval(this.removeOutdatedEntries, intervalInMs);
   }
@@ -88,9 +94,12 @@ export class ClaimCheckCache {
     }
 
     this.isEnabled = false;
-    clearInterval(this.cleanupTimer);
     this.clearEntireCache();
-    this.cleanupTimer = undefined;
+
+    if (this.cleanupTimer !== undefined) {
+      clearInterval(this.cleanupTimer);
+      this.cleanupTimer = undefined;
+    }
   }
 
   /**
@@ -161,6 +170,13 @@ export class ClaimCheckCache {
 
     const now = moment();
 
+    const cacheLifeTimeInSeconds = this.config.cacheLifetimeInSeconds || this.defaultConfig.cacheLifetimeInSeconds;
+
+    // Using 0 means that the cached values will never expire.
+    if (cacheLifeTimeInSeconds === 0) {
+      return;
+    }
+
     for (const userId of cachedUserIds) {
 
       const cachedUser = this.cache[userId];
@@ -170,7 +186,6 @@ export class ClaimCheckCache {
 
         const claim = cachedUser[claimName];
 
-        const cacheLifeTimeInSeconds = this.config.cacheLifetimeInSeconds || 300;
         const cacheValueExpirationTime = claim.lastCheckedAt.add(cacheLifeTimeInSeconds, 'second');
 
         const cacheEntryIsOutdated = now.isAfter(cacheValueExpirationTime);

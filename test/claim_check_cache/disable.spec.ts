@@ -11,6 +11,7 @@ describe('ClaimCheckCache.disable()', (): void => {
   before((): void => {
     const configToUse = {
       enabled: false,
+      cacheLifetimeInSeconds: 10,
       cleanupIntervalInSeconds: 1,
     };
 
