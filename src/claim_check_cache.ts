@@ -71,11 +71,13 @@ export class ClaimCheckCache {
 
     this.isEnabled = true;
 
-    const intervalInMs = this.config.cleanupIntervalInSeconds
+    const intervalInMs = this.config.cleanupIntervalInSeconds !== undefined
       ? this.config.cleanupIntervalInSeconds * 1000
       : this.defaultConfig.cleanupIntervalInSeconds * 1000;
 
-    const cacheLifeTimeInSeconds = this.config.cacheLifetimeInSeconds || this.defaultConfig.cacheLifetimeInSeconds;
+    const cacheLifeTimeInSeconds = this.config.cacheLifetimeInSeconds !== undefined
+      ? this.config.cacheLifetimeInSeconds
+      : this.defaultConfig.cacheLifetimeInSeconds;
 
     const cachedValuesDoNotExpire = intervalInMs === 0 || cacheLifeTimeInSeconds === 0;
     if (cachedValuesDoNotExpire) {
