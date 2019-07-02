@@ -27,6 +27,10 @@ export class ClaimCheckCacheMock {
     this.config = config;
   }
 
+  public get enabled(): boolean {
+    return this.config.enabled;
+  }
+
   public add(userId: string, claimName: string, hasClaim: boolean): void {
 
     if (!this.config.enabled) {
