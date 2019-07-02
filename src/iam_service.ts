@@ -18,9 +18,10 @@ export class IAMService implements IIAMService {
   }
 
   public async initialize(): Promise<void> {
-    // TODO: Update @essential-projects/iam_contracts IIAMConfiguration type.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.cache = new ClaimCheckCache((this.config as any).cache);
+    const cacheConfigToUse = this.config && this.config.cache
+      ? this.config.cache
+      : undefined;
+    this.cache = new ClaimCheckCache(cacheConfigToUse);
   }
 
   public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
