@@ -34,8 +34,6 @@ describe('ClaimCheckCache.clearEntireCache()', (): void => {
     const cachedKeys = Object.keys(testCache['cache']);
 
     should(cachedKeys).have.length(0);
-
-    testCache.disable();
   });
 
 });

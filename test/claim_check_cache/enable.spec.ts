@@ -27,8 +27,6 @@ describe('ClaimCheckCache.enable()', (): void => {
       testCache.removeOutdatedEntries = (): void => {
         should(testCache.enabled).be.true();
 
-        testCache.disable();
-
         resolve();
       };
 
