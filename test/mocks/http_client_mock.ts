@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export class HttpClientMock {
 
-  private claimConfig: any = {
+  public claimConfig: any = {
     userId1: {
       claim1: true,
       claim2: false,
+      claim3: true,
+      claim4: false,
     },
     userId2: {
       claim1: false,
-      claim3: true,
+      claim2: true,
+      claim3: false,
+      claim4: true,
     },
   };
 

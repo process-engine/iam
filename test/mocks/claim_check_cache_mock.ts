@@ -1,34 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as moment from 'moment';
 
 export class ClaimCheckCacheMock {
 
   public config: any;
 
-  private cache: any = {
+  public cache: any = {
     userId1: {
       claim1: {
-        userHasClaim: true,
-        lastCheckedAt: moment(),
+        userHasClaim: false,
       },
       claim2: {
-        userHasClaim: false,
-        lastCheckedAt: moment(),
+        userHasClaim: true,
       },
     },
     userId2: {
       claim1: {
-        userHasClaim: false,
-        lastCheckedAt: moment(),
+        userHasClaim: true,
       },
       claim3: {
         userHasClaim: true,
-        lastCheckedAt: moment(),
       },
     },
   };
 
-  constructor(config: any) {
+  constructor(config?: any) {
     this.config = config;
   }
 
@@ -48,11 +43,9 @@ export class ClaimCheckCacheMock {
     if (claimNotCached) {
       this.cache[userId][claimName] = {
         userHasClaim: hasClaim,
-        lastCheckedAt: moment(),
       };
     } else {
       this.cache[userId][claimName].userHasClaim = hasClaim;
-      this.cache[userId][claimName].lastCheckedAt = moment();
     }
   }
 
