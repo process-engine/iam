@@ -45,7 +45,7 @@ export class ClaimCheckCache {
     const defaultConfig: ClaimCacheConfig = {
       enabled: true,
       cacheLifetimeInSeconds: 300,
-      cleanupIntervalInSeconds: 120,
+      cleanupIntervalInSeconds: 10,
     };
 
     this.config = config || defaultConfig;
@@ -74,7 +74,7 @@ export class ClaimCheckCache {
     // Fallback is 2 minutes
     const intervalInMs = this.config && this.config.cleanupIntervalInSeconds
       ? this.config.cleanupIntervalInSeconds * 1000
-      : 120000;
+      : 10000;
 
     this.cleanupTimer = setInterval(this.removeOutdatedEntries, intervalInMs);
   }

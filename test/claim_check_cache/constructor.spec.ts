@@ -83,7 +83,7 @@ describe('ClaimCheckCache - new()', (): void => {
       const defaultConfig = {
         enabled: true,
         cacheLifetimeInSeconds: 300,
-        cleanupIntervalInSeconds: 120,
+        cleanupIntervalInSeconds: 10,
       };
 
       should(cache.enabled).be.true();

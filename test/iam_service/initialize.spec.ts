@@ -41,7 +41,7 @@ describe('IamService.initialize()', (): void => {
     const expectedDefaultConfig = {
       enabled: true,
       cacheLifetimeInSeconds: 300,
-      cleanupIntervalInSeconds: 120,
+      cleanupIntervalInSeconds: 10,
     };
 
     should(iamService.cache).be.instanceOf(ClaimCheckCache);
