@@ -23,7 +23,7 @@
   "dependencies": {
     "@essential-projects/errors_ts": "^1.4.0",
     "@essential-projects/http_contracts": "^2.3.0",
-    "@essential-projects/iam_contracts": "^3.4.0",
+    "@essential-projects/iam_contracts": "feature~update_iam_service_config",
     "loggerhythm": "^3.0.3",
     "moment": "^2.24.0"
   },
