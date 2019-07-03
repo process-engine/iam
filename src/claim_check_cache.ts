@@ -84,7 +84,7 @@ export class ClaimCheckCache {
       return;
     }
 
-    this.cleanupTimer = setInterval(this.removeOutdatedEntries, intervalInMs);
+    this.cleanupTimer = setInterval(this.removeOutdatedEntries.bind(this), intervalInMs);
   }
 
   /**
