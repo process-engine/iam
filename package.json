@@ -3,26 +3,39 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Contains the process engines' IAM related functions.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
+  "author": "5Minds IT-Solutions GmbH & Co. KG",
+  "maintainers": [
+    "Alexander Kasten <alexander.kasten@5minds.de>",
+    "Christian Werner <christian.werner@5minds.de>",
+    "René Föhring <rene.foehring@5minds.de>",
+    "Steffen Knaup <steffen.knaup@5minds.de>"
+  ],
   "contributors": [
-    "Sebastian Meier <sebastian.meier@5minds.de>",
-    "Christian Werner <christian.werner@5minds.de>"
+    "Christoph Gnip <christoph.gnip@5minds.de>",
+    "Robin Lenz <robin.lenz@5minds.de>",
+    "Sebastian Meier <sebastian.meier@5minds.de>"
   ],
   "dependencies": {
     "@essential-projects/errors_ts": "^1.4.0",
     "@essential-projects/http_contracts": "^2.3.0",
-    "@essential-projects/iam_contracts": "^3.4.0",
-    "loggerhythm": "^3.0.3"
+    "@essential-projects/iam_contracts": "^3.6.0",
+    "loggerhythm": "^3.0.3",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@essential-projects/eslint-config": "^1.0.0",
+    "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.2",
     "eslint": "^5.16.0",
     "jsonwebtoken": "^8.4.0",
+    "mocha": "^6.0.0",
+    "should": "^13.2.3",
+    "ts-mocha": "^6.0.0",
     "tsconfig": "^7.0.0",
     "typescript": "^3.3.3"
   },
@@ -34,6 +47,6 @@
     "prepare": "npm run build",
     "lint": "eslint src/*.ts",
     "lint-fix": "eslint --fix src/*.ts",
-    "test": ":"
+    "test": "ts-mocha -p ./tsconfig.json ./test/**/*.spec.ts"
   }
 }

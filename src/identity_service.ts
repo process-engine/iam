@@ -13,7 +13,6 @@ export class IdentityService implements IIdentityService {
       throw new BadRequestError('Must provide a token by which to create an identity!');
     }
 
-    // TODO: The dummy token check needs to be removed in the future!!
     try {
       const isDummyToken = Buffer.from(token, 'base64').toString() === 'dummy_token';
       if (isDummyToken) {
