@@ -1,8 +1,12 @@
+import {Logger} from 'loggerhythm';
+
 import {BadRequestError, ForbiddenError} from '@essential-projects/errors_ts';
 import {IHttpClient} from '@essential-projects/http_contracts';
 import {IIAMConfiguration, IIAMService, IIdentity} from '@essential-projects/iam_contracts';
 
 import {CacheValue, ClaimCheckCache} from './claim_check_cache';
+
+const logger = Logger.createLogger('processengine:iam:service');
 
 export class IAMService implements IIAMService {
 
@@ -11,7 +15,9 @@ export class IAMService implements IIAMService {
 
   private cache: ClaimCheckCache;
 
-  private httpResponseOkNoContentCode: number = 204;
+  private httpResponseUnauthorizedCode = 401;
+  private httpResponseForbiddenCode = 403;
+  private httpResponseOkNoContentCode = 204;
 
   constructor(httpClient: IHttpClient) {
     this.httpClient = httpClient;
@@ -101,7 +107,12 @@ export class IAMService implements IIAMService {
 
       return response.status === this.httpResponseOkNoContentCode;
     } catch (error) {
-      return false;
+      if (error.code === this.httpResponseForbiddenCode || error.code === this.httpResponseUnauthorizedCode) {
+        return false;
+      }
+
+      logger.error('Failed to send Claim check request against the authority!', error.message, error.stack);
+      throw error;
     }
   }
 
