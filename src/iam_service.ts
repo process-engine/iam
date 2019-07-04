@@ -96,9 +96,13 @@ export class IAMService implements IIAMService {
       url += `?claimValue=${claimValue}`;
     }
 
-    const response = await this.httpClient.get<any>(url, requestAuthHeaders);
+    try {
+      const response = await this.httpClient.get(url, requestAuthHeaders);
 
-    return response.status === this.httpResponseOkNoContentCode;
+      return response.status === this.httpResponseOkNoContentCode;
+    } catch (error) {
+      return false;
+    }
   }
 
 }
