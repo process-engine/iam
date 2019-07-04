@@ -21,7 +21,7 @@ type CacheEntry = {[claimName: string]: CacheValue}
 
 export type CacheValue = {
   userHasClaim: boolean;
-  lastCheckedAt: moment.Moment;
+  lastCheckedAt: string;
 }
 
 export type ClaimCacheConfig = {
@@ -127,11 +127,11 @@ export class ClaimCheckCache {
     if (claimNotCached) {
       this.cache[userId][claimName] = {
         userHasClaim: hasClaim,
-        lastCheckedAt: moment(),
+        lastCheckedAt: moment().toISOString(),
       };
     } else {
       this.cache[userId][claimName].userHasClaim = hasClaim;
-      this.cache[userId][claimName].lastCheckedAt = moment();
+      this.cache[userId][claimName].lastCheckedAt = moment().toISOString();
     }
   }
 
@@ -188,7 +188,7 @@ export class ClaimCheckCache {
 
         const claim = cachedUser[claimName];
 
-        const cacheValueExpirationTime = claim.lastCheckedAt.add(cacheLifeTimeInSeconds, 'second');
+        const cacheValueExpirationTime = moment(claim.lastCheckedAt).add(cacheLifeTimeInSeconds, 'second');
 
         const cacheEntryIsOutdated = now.isAfter(cacheValueExpirationTime);
         if (cacheEntryIsOutdated) {
