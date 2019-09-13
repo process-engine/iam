@@ -39,4 +39,9 @@ describe('IdentityService.getIdentity()', (): void => {
     should((): Promise<IIdentity> => identityService.getIdentity(sampleInvalidToken)).throw();
   });
 
+  it('Should throw an error, if multiple tokens are passed', (): void => {
+    const concatToken = `${sampleToken}, ${sampleToken}`;
+    should((): Promise<IIdentity> => identityService.getIdentity(concatToken)).throw();
+  });
+
 });
