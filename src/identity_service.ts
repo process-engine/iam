@@ -17,13 +17,9 @@ export class IdentityService implements IIdentityService {
       throw new BadRequestError('Must provide a token by which to create an identity!');
     }
 
-    try {
-      const isDummyToken = Buffer.from(token, 'base64').toString() === 'dummy_token';
-      if (isDummyToken) {
-        return Promise.resolve(new Identity(token, 'dummy_token'));
-      }
-    } catch (error) {
-      // do nothing
+    const isDummyToken = this.isDummyToken(token);
+    if (isDummyToken) {
+      return Promise.resolve(new Identity(token, 'dummy_token'));
     }
 
     const decodedToken = <TokenBody> jsonwebtoken.decode(token);
@@ -44,6 +40,15 @@ export class IdentityService implements IIdentityService {
     const identity = new Identity(token, decodedToken.sub);
 
     return Promise.resolve(identity);
+  }
+
+  private isDummyToken(token): boolean {
+    try {
+      const isDummyToken = Buffer.from(token, 'base64').toString() === 'dummy_token';
+      return isDummyToken;
+    } catch {
+      return false;
+    }
   }
 
 }
