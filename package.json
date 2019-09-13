@@ -31,6 +31,7 @@
     "@essential-projects/eslint-config": "^1.0.0",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.2",
+    "c8": "^5.0.1",
     "eslint": "^5.16.0",
     "jsonwebtoken": "^8.4.0",
     "mocha": "^6.0.0",
@@ -47,6 +48,8 @@
     "prepare": "npm run build",
     "lint": "eslint src/*.ts",
     "lint-fix": "eslint --fix src/*.ts",
-    "test": "ts-mocha -p ./tsconfig.json ./test/**/*.spec.ts"
+    "test": "c8 ts-mocha -p ./tsconfig.json ./test/**/*.spec.ts",
+    "report-test-coverage": "c8 report",
+    "check-test-coverage": "c8 check-coverage --lines 40 --functions 25 --branches 50"
   }
 }
