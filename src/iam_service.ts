@@ -6,7 +6,7 @@ import {IIAMConfiguration, IIAMService, IIdentity} from '@essential-projects/iam
 
 import {CacheValue, ClaimCheckCache} from './claim_check_cache';
 
-const logger = Logger.createLogger('processengine:iam:service');
+const logger = Logger.createLogger('processengine:iam:iam_service');
 
 export class IAMService implements IIAMService {
 
