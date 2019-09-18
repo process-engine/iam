@@ -23,6 +23,7 @@ describe('IamService.ensureHasClaim()', (): void => {
     iamService.cache = claimCheckCacheMock;
     iamService.config = {
       disableClaimCheck: false,
+      allowGodToken: false,
     };
 
     iamService.checkIfUserHasClaim = async (): Promise<boolean> => Promise.resolve(true);
@@ -87,6 +88,26 @@ describe('IamService.ensureHasClaim()', (): void => {
 
     it('Should resolve without result', async (): Promise<void> => {
       iamService.config.disableClaimCheck = true;
+      const result = await iamService.ensureHasClaim(testIdentity, 'claim1');
+      should.not.exist(result);
+    });
+
+  });
+
+  describe('God token is enabled', (): void => {
+
+    it('Should throw an error, if invalid parameters are provided', async (): Promise<void> => {
+      iamService.config.allowGodToken = true;
+      try {
+        await iamService.ensureHasClaim(undefined, 'claim1');
+      } catch (error) {
+        const expectedError = new BadRequestError('No valid identity given!');
+        should(error).be.eql(expectedError);
+      }
+    });
+
+    it('Should resolve without result', async (): Promise<void> => {
+      iamService.config.allowGodToken = true;
       const result = await iamService.ensureHasClaim(testIdentity, 'claim1');
       should.not.exist(result);
     });
