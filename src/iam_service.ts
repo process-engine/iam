@@ -28,6 +28,28 @@ export class IAMService implements IIAMService {
       ? this.config.cache
       : undefined;
     this.cache = new ClaimCheckCache(cacheConfigToUse);
+
+    if (this.config && this.config.allowGodToken) {
+      logger.error(`
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                              W A R N I N G                              @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                                                         @
+@                    Dangerous configuration detected!                    @
+@                                                                         @
+@  'allowGodToken' is set to true. This allows unauthorized access with   @
+@  no restrictions. Never use this setting in a production environment.   @
+@                                                                         @
+@  Please consider changing the option 'allowGodToken' to false. You can  @
+@  do this, for example, by setting the following environment variable:   @
+@                                                                         @
+@                  iam__iam_service__allowGodToken=false                  @
+@                                                                         @
+@  and restarting the program.                                            @
+@                                                                         @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+`);
+    }
   }
 
   public async ensureHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<void> {
@@ -40,13 +62,15 @@ export class IAMService implements IIAMService {
       throw new BadRequestError('No valid identity given!');
     }
 
-    try {
-      const isDummyToken = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
-      if (isDummyToken) {
-        return;
+    if (this.config.allowGodToken === true) {
+      try {
+        const isDummyToken = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
+        if (isDummyToken) {
+          return;
+        }
+      } catch (error) {
+        // do nothing
       }
-    } catch (error) {
-      // do nothing
     }
 
     if (!claimName || claimName === '') {
