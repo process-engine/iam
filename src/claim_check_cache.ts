@@ -166,7 +166,7 @@ export class ClaimCheckCache {
            this.cache[token][claimName] !== undefined;
   }
 
-  private removeOutdatedEntries(): void {
+  public removeOutdatedEntries(): void {
 
     const cachedTokens = Object.keys(this.cache);
 
@@ -198,7 +198,7 @@ export class ClaimCheckCache {
     }
   }
 
-  private clearEntireCache(): void {
+  public clearEntireCache(): void {
     const tokens = Object.keys(this.cache);
     for (const token of tokens) {
       delete this.cache[token];
