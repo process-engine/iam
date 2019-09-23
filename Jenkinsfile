@@ -33,7 +33,7 @@ pipeline {
           sh 'git --no-pager show -s --format=\'%an\' > commit-author.txt'
           def commitAuthorName = readFile('commit-author.txt').trim()
 
-          def ciUserName = "process-engine-ci"
+          def ciUserName = "admin"
 
           echo(commitAuthorName)
           echo("Commiter is process-engine-ci: ${commitAuthorName == ciUserName}")
