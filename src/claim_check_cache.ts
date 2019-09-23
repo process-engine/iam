@@ -3,7 +3,7 @@ import * as moment from 'moment';
 /**
  * Structure looks like:
  * {
- *   userId: {
+ *   token: {
  *     claim1: {
  *       userHasClaim: true,
  *       lastCheckedAt: '2019-07-01T09:11:13.000Z'
@@ -15,7 +15,7 @@ import * as moment from 'moment';
  *   }
  * }
  */
-type Cache = {[userId: string]: CacheEntry}
+type Cache = {[token: string]: CacheEntry}
 
 type CacheEntry = {[claimName: string]: CacheValue}
 
@@ -105,70 +105,70 @@ export class ClaimCheckCache {
   }
 
   /**
-   * Caches the given claim check result for the given userId and claim name.
+   * Caches the given claim check result for the given token and claim name.
    *
-   * @param userId    The userId for which to cache a claim check result.
+   * @param token     The token for which to cache a claim check result.
    * @param claimName The name of the claim for which to cache a result.
    * @param hasClaim  The result of the claim check to cache.
    */
-  public add(userId: string, claimName: string, hasClaim: boolean): void {
+  public add(token: string, claimName: string, hasClaim: boolean): void {
 
     if (!this.isEnabled) {
       return;
     }
 
-    const userIdNotYetCached = !this.cache[userId];
-    if (userIdNotYetCached) {
-      this.cache[userId] = {};
+    const tokenNotYetCached = !this.cache[token];
+    if (tokenNotYetCached) {
+      this.cache[token] = {};
     }
 
-    const claimNotCached = !this.hasMatchingEntry(userId, claimName);
+    const claimNotCached = !this.hasMatchingEntry(token, claimName);
 
     if (claimNotCached) {
-      this.cache[userId][claimName] = {
+      this.cache[token][claimName] = {
         userHasClaim: hasClaim,
         lastCheckedAt: moment().toISOString(),
       };
     } else {
-      this.cache[userId][claimName].userHasClaim = hasClaim;
-      this.cache[userId][claimName].lastCheckedAt = moment().toISOString();
+      this.cache[token][claimName].userHasClaim = hasClaim;
+      this.cache[token][claimName].lastCheckedAt = moment().toISOString();
     }
   }
 
   /**
-   * Retrieves the cached check result for the given UserId and claim name.
+   * Retrieves the cached check result for the given token and claim name.
    *
-   * @param   userId    The UserId for which to get the claim check.
+   * @param   token     The token for which to get the claim check.
    * @param   claimName The name of the claim for which to get the cached
    *                    check result.
    * @returns           The cached claim check result, or "undefind",
    *                    if no matching cache entry exists.
    */
-  public get(userId: string, claimName: string): CacheValue {
-    if (!this.hasMatchingEntry(userId, claimName)) {
+  public get(token: string, claimName: string): CacheValue {
+    if (!this.hasMatchingEntry(token, claimName)) {
       return undefined;
     }
 
-    return this.cache[userId][claimName];
+    return this.cache[token][claimName];
   }
 
   /**
-   * Checks if the cache contains a result for the given userId and claim name.
+   * Checks if the cache contains a result for the given token and claim name.
    *
-   * @param   userId    The UserId for which to get the claim check.
+   * @param   token     The tken for which to get the claim check.
    * @param   claimName The name of the claim for which to check if a cached
    *                    result exists.
    * @returns           "True", if the cache has a matching entry;
    *                    otherwise "false".
    */
-  public hasMatchingEntry(userId: string, claimName: string): boolean {
-    return this.cache[userId] !== undefined &&
-           this.cache[userId][claimName] !== undefined;
+  public hasMatchingEntry(token: string, claimName: string): boolean {
+    return this.cache[token] !== undefined &&
+           this.cache[token][claimName] !== undefined;
   }
 
-  private removeOutdatedEntries(): void {
+  public removeOutdatedEntries(): void {
 
-    const cachedUserIds = Object.keys(this.cache);
+    const cachedTokens = Object.keys(this.cache);
 
     const now = moment();
 
@@ -179,29 +179,29 @@ export class ClaimCheckCache {
       return;
     }
 
-    for (const userId of cachedUserIds) {
+    for (const token of cachedTokens) {
 
-      const cachedUser = this.cache[userId];
+      const cachedToken = this.cache[token];
 
-      const cachedClaimsForUser = Object.keys(cachedUser);
-      for (const claimName of cachedClaimsForUser) {
+      const cachedClaimsForToken = Object.keys(cachedToken);
+      for (const claimName of cachedClaimsForToken) {
 
-        const claim = cachedUser[claimName];
+        const claim = cachedToken[claimName];
 
         const cacheValueExpirationTime = moment(claim.lastCheckedAt).add(cacheLifeTimeInSeconds, 'second');
 
         const cacheEntryIsOutdated = now.isAfter(cacheValueExpirationTime);
         if (cacheEntryIsOutdated) {
-          delete cachedUser[claimName];
+          delete cachedToken[claimName];
         }
       }
     }
   }
 
-  private clearEntireCache(): void {
-    const cachedUserIds = Object.keys(this.cache);
-    for (const userId of cachedUserIds) {
-      delete this.cache[userId];
+  public clearEntireCache(): void {
+    const tokens = Object.keys(this.cache);
+    for (const token of tokens) {
+      delete this.cache[token];
     }
   }
 

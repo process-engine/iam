@@ -29,26 +29,11 @@ export class IAMService implements IIAMService {
       : undefined;
     this.cache = new ClaimCheckCache(cacheConfigToUse);
 
-    if (this.config && this.config.allowGodToken) {
-      logger.error(`
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@                              W A R N I N G                              @
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@                                                                         @
-@                    Dangerous configuration detected!                    @
-@                                                                         @
-@  'allowGodToken' is set to true. This allows unauthorized access with   @
-@  no restrictions. Never use this setting in a production environment.   @
-@                                                                         @
-@  Please consider changing the option 'allowGodToken' to false. You can  @
-@  do this, for example, by setting the following environment variable:   @
-@                                                                         @
-@                  iam__iam_service__allowGodToken=false                  @
-@                                                                         @
-@  and restarting the program.                                            @
-@                                                                         @
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-`);
+    const isProductionNodeEnv = process.env.NODE_ENV && process.env.NODE_ENV.indexOf('test') === -1;
+    const godTokenIsAllowed = this.config && this.config.allowGodToken;
+    if (isProductionNodeEnv && godTokenIsAllowed) {
+      // eslint-disable-next-line max-len
+      logger.error('allowGodToken is set to true. This allows unauthorized access with no restrictions. Never use this setting in a production environment!');
     }
   }
 
@@ -86,7 +71,7 @@ export class IAMService implements IIAMService {
 
   private async checkIfUserHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<boolean> {
 
-    const resultFromCache = this.getFromCache(identity.userId, claimName);
+    const resultFromCache = this.getFromCache(identity.token, claimName);
 
     if (resultFromCache !== undefined) {
       return resultFromCache.userHasClaim;
@@ -94,22 +79,22 @@ export class IAMService implements IIAMService {
 
     const resultFromAuthority = await this.getFromAuthority(identity.token, claimName, claimValue);
 
-    this.cache.add(identity.userId, claimName, resultFromAuthority);
+    this.cache.add(identity.token, claimName, resultFromAuthority);
 
     return resultFromAuthority;
   }
 
-  private getFromCache(userId: string, claimName: string): CacheValue {
+  private getFromCache(token: string, claimName: string): CacheValue {
 
     if (!this.cache.enabled) {
       return undefined;
     }
 
-    if (!this.cache.hasMatchingEntry(userId, claimName)) {
+    if (!this.cache.hasMatchingEntry(token, claimName)) {
       return undefined;
     }
 
-    return this.cache.get(userId, claimName);
+    return this.cache.get(token, claimName);
   }
 
   private async getFromAuthority(token: string, claimName: string, claimValue?: string): Promise<boolean> {

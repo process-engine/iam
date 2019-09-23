@@ -28,7 +28,7 @@ describe('IamService.checkIfUserHasClaim()', (): void => {
       return Promise.resolve(false);
     };
 
-    const result = await iamService.checkIfUserHasClaim({userId: '123'}, 'claim');
+    const result = await iamService.checkIfUserHasClaim({userId: '123', token: 'sadfasdfsdfsdfsdf'}, 'claim');
 
     should(result).be.true();
   });
@@ -42,7 +42,7 @@ describe('IamService.checkIfUserHasClaim()', (): void => {
       return Promise.resolve(false);
     };
 
-    const result = await iamService.checkIfUserHasClaim({userId: '123'}, 'claim');
+    const result = await iamService.checkIfUserHasClaim({userId: '123', token: 'sdfsdfsdfsdfsf'}, 'claim');
 
     should(result).be.false();
   });
@@ -58,12 +58,12 @@ describe('IamService.checkIfUserHasClaim()', (): void => {
         return Promise.resolve(false);
       };
 
-      const dummyIdentity = {userId: '123'};
+      const dummyIdentity = {userId: '123', token: '273623460fg12g36526013g5v62013gv12bgrv12bv02'};
       const dummyClaim = 'claim';
 
-      iamService.cache.add = (userId: string, claimName: string, hasClaim: boolean): void => {
+      iamService.cache.add = (token: string, claimName: string, hasClaim: boolean): void => {
         try {
-          should(userId).be.equal(dummyIdentity.userId);
+          should(token).be.equal(dummyIdentity.token);
           should(claimName).be.equal(dummyClaim);
           should(hasClaim).be.false();
         } catch (error) {
