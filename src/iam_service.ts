@@ -71,7 +71,7 @@ export class IAMService implements IIAMService {
 
   private async checkIfUserHasClaim(identity: IIdentity, claimName: string, claimValue?: string): Promise<boolean> {
 
-    const resultFromCache = this.getFromCache(identity.userId, claimName);
+    const resultFromCache = this.getFromCache(identity.token, claimName);
 
     if (resultFromCache !== undefined) {
       return resultFromCache.userHasClaim;
@@ -79,22 +79,22 @@ export class IAMService implements IIAMService {
 
     const resultFromAuthority = await this.getFromAuthority(identity.token, claimName, claimValue);
 
-    this.cache.add(identity.userId, claimName, resultFromAuthority);
+    this.cache.add(identity.token, claimName, resultFromAuthority);
 
     return resultFromAuthority;
   }
 
-  private getFromCache(userId: string, claimName: string): CacheValue {
+  private getFromCache(token: string, claimName: string): CacheValue {
 
     if (!this.cache.enabled) {
       return undefined;
     }
 
-    if (!this.cache.hasMatchingEntry(userId, claimName)) {
+    if (!this.cache.hasMatchingEntry(token, claimName)) {
       return undefined;
     }
 
-    return this.cache.get(userId, claimName);
+    return this.cache.get(token, claimName);
   }
 
   private async getFromAuthority(token: string, claimName: string, claimValue?: string): Promise<boolean> {
