@@ -17,6 +17,11 @@ export class IdentityService implements IIdentityService {
       throw new BadRequestError('Must provide a token by which to create an identity!');
     }
 
+    const isInternalToken = this.isInternalToken(token);
+    if (isInternalToken) {
+      return Promise.resolve(new Identity(token, 'ProcessEngineInternalUser'));
+    }
+
     const isDummyToken = this.isDummyToken(token);
     if (isDummyToken) {
       return Promise.resolve(new Identity(token, 'dummy_token'));
@@ -42,7 +47,16 @@ export class IdentityService implements IIdentityService {
     return Promise.resolve(identity);
   }
 
-  private isDummyToken(token): boolean {
+  public isInternalToken(token): boolean {
+    try {
+      const isInternalToken = Buffer.from(token, 'base64').toString() === 'ProcessEngineInternalUser';
+      return isInternalToken;
+    } catch {
+      return false;
+    }
+  }
+
+  public isDummyToken(token): boolean {
     try {
       const isDummyToken = Buffer.from(token, 'base64').toString() === 'dummy_token';
       return isDummyToken;
