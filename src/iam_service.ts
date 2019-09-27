@@ -47,19 +47,32 @@ export class IAMService implements IIAMService {
       throw new BadRequestError('No valid identity given!');
     }
 
-    const isDummyToken = this.checkIfTokenIsDummyToken(identity.token);
-    if (isDummyToken && this.config.allowGodToken === true) {
+    if (!claimName || claimName === '') {
+      throw new BadRequestError('No valid claimName given!');
+    }
+
+    const isInternalToken = this.checkIfTokenIsInternalToken(identity.token);
+    if (isInternalToken) {
       return;
     }
 
-    if (!claimName || claimName === '') {
-      throw new BadRequestError('No valid claimName given!');
+    const isDummyToken = this.checkIfTokenIsDummyToken(identity.token);
+    if (isDummyToken && this.config.allowGodToken === true) {
+      return;
     }
 
     const userHasClaim = await this.checkIfUserHasClaim(identity, claimName, claimValue);
 
     if (!userHasClaim) {
       throw new ForbiddenError('Identity does not have the requested claim!');
+    }
+  }
+
+  private checkIfTokenIsInternalToken(token: string): boolean {
+    try {
+      return Buffer.from(token, 'base64').toString() === 'ProcessEngineInternalUser';
+    } catch (error) {
+      return false;
     }
   }
 
