@@ -36,14 +36,25 @@ describe('IamService.ensureHasClaim()', (): void => {
       should.not.exist(result);
     });
 
-    it('Should resolve without result, if the dummy token is used', async (): Promise<void> => {
+    it('Should resolve without result, if the ProcessEngine internal token is used', async (): Promise<void> => {
 
       const dummyIdentity = {
-        userId: 'userId1',
+        userId: 'ProcessEngineInternalUser',
+        token: 'UHJvY2Vzc0VuZ2luZUludGVybmFsVXNlcg==',
+      };
+
+      const result = await iamService.ensureHasClaim(dummyIdentity, 'claim1');
+      should.not.exist(result);
+    });
+
+    it('Should resolve without result, if the dummy token is used and god tokens are allowed', async (): Promise<void> => {
+
+      const dummyIdentity = {
+        userId: 'dummy_token',
         token: 'ZHVtbXlfdG9rZW4=',
       };
 
-      iamService.config.disableClaimCheck = true;
+      iamService.config.allowGodToken = true;
       const result = await iamService.ensureHasClaim(dummyIdentity, 'claim1');
       should.not.exist(result);
     });
@@ -62,6 +73,21 @@ describe('IamService.ensureHasClaim()', (): void => {
         await iamService.ensureHasClaim(testIdentity);
       } catch (error) {
         const expectedError = new BadRequestError('No valid claimName given!');
+        should(error).be.eql(expectedError);
+      }
+    });
+
+    it('Should throw an error, if the dummy token is used and god tokens are forbidden', async (): Promise<void> => {
+      try {
+        const dummyIdentity = {
+          userId: 'dummy_token',
+          token: 'ZHVtbXlfdG9rZW4=',
+        };
+
+        iamService.config.allowGodToken = false;
+        await iamService.ensureHasClaim(dummyIdentity, 'claimXY');
+      } catch (error) {
+        const expectedError = new ForbiddenError('Identity does not have the requested claim!');
         should(error).be.eql(expectedError);
       }
     });
@@ -86,29 +112,33 @@ describe('IamService.ensureHasClaim()', (): void => {
       should.not.exist(result);
     });
 
-    it('Should resolve without result', async (): Promise<void> => {
+    it('Should resolve without result, for any identity', async (): Promise<void> => {
       iamService.config.disableClaimCheck = true;
       const result = await iamService.ensureHasClaim(testIdentity, 'claim1');
       should.not.exist(result);
     });
 
-  });
+    it('Should resolve without result, if the ProcessEngine internal token is used', async (): Promise<void> => {
 
-  describe('God token is enabled', (): void => {
+      const internalUserToken = {
+        userId: 'ProcessEngineInternalUser',
+        token: 'UHJvY2Vzc0VuZ2luZUludGVybmFsVXNlcg==',
+      };
 
-    it('Should throw an error, if invalid parameters are provided', async (): Promise<void> => {
-      iamService.config.allowGodToken = true;
-      try {
-        await iamService.ensureHasClaim(undefined, 'claim1');
-      } catch (error) {
-        const expectedError = new BadRequestError('No valid identity given!');
-        should(error).be.eql(expectedError);
-      }
+      iamService.config.disableClaimCheck = true;
+      const result = await iamService.ensureHasClaim(internalUserToken, 'claim1');
+      should.not.exist(result);
     });
 
-    it('Should resolve without result', async (): Promise<void> => {
-      iamService.config.allowGodToken = true;
-      const result = await iamService.ensureHasClaim(testIdentity, 'claim1');
+    it('Should resolve without result, if the dummy token is used', async (): Promise<void> => {
+
+      const dummyIdentity = {
+        userId: 'dummy_token',
+        token: 'ZHVtbXlfdG9rZW4=',
+      };
+
+      iamService.config.disableClaimCheck = true;
+      const result = await iamService.ensureHasClaim(dummyIdentity, 'claim1');
       should.not.exist(result);
     });
 
