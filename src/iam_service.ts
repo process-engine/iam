@@ -47,15 +47,9 @@ export class IAMService implements IIAMService {
       throw new BadRequestError('No valid identity given!');
     }
 
-    if (this.config.allowGodToken === true) {
-      try {
-        const isDummyToken = Buffer.from(identity.token, 'base64').toString() === 'dummy_token';
-        if (isDummyToken) {
-          return;
-        }
-      } catch (error) {
-        // do nothing
-      }
+    const isDummyToken = this.checkIfTokenIsDummyToken(identity.token);
+    if (isDummyToken && this.config.allowGodToken === true) {
+      return;
     }
 
     if (!claimName || claimName === '') {
@@ -66,6 +60,14 @@ export class IAMService implements IIAMService {
 
     if (!userHasClaim) {
       throw new ForbiddenError('Identity does not have the requested claim!');
+    }
+  }
+
+  private checkIfTokenIsDummyToken(token: string): boolean {
+    try {
+      return Buffer.from(token, 'base64').toString() === 'dummy_token';
+    } catch (error) {
+      return false;
     }
   }
 
