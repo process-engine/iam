@@ -98,6 +98,11 @@ describe('IamService.ensureHasClaim()', (): void => {
         await iamService.ensureHasClaim(testIdentity, 'claim1');
       } catch (error) {
         const expectedError = new ForbiddenError('Identity does not have the requested claim!');
+        expectedError.additionalInformation = {
+          identity: testIdentity,
+          claim: 'claim1',
+          claimValue: undefined,
+        };
         should(error).be.eql(expectedError);
       }
     });
