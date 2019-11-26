@@ -6,29 +6,28 @@ interfaces.
 
 ## Purpose
 
-The ProcessEngine will use the IAM for authorization only. The contracts
-found in `essential-projects/iam_contracts` will provide a template for this.
+The ProcessEngine uses IAM for performing authorization related requests.
+The contracts found in `essential-projects/iam_contracts` provide a template for this.
 
-Two things are implemented:
+Two services are available:
 
-1. The IAM Service
+1. IamService
 
-   Used for interaction with the authority. Provides a method to check if an
-   identity can be associated with the necessary claims.
+   Used for interaction with the authority.
+   `ensureHasClaim` allows to check if a given identity has a given claim.
 
-2. The Identity Service
+2. IdentityService
 
    A service that knows how to transform a given token (e.g. JWT) to an
    identity that the authority can understand.
 
 **Usage Example:**
 
-The easiest way to get familiar with the ideas is to look at an example; this
-will illustrate the use of and the interaction between an IAM service and the
-identity service:
+The easiest way to get familiar with the idea is to look at an example; this
+will illustrate the use of and the interaction between the IamService and the
+IdentityService:
 
 ```ts
-// Create the two services; will be implemented here in this repository.
 const identityService: IIdentityService = new IdentityService();
 const iamService: IIAMService = new IAMService(new HttpClient(), identityService, this.config.introspectPath);
 
@@ -39,38 +38,36 @@ const identity: IIdentity = identityService.getIdentity(token);
 // Will result in:
 //
 // 1. An UnauthorizedError HTTP Status code, if the identity is not logged in at the authority.
-// 2. An ForbiddenError HTTP Status code, if the identity does not have the claim.
-// 3. Nothing, if the claim and identity matches.
+// 2. A ForbiddenError HTTP Status code, if the identity does not have the given claim.
+// 3. Nothing, if the identity has the given claim.
 iamService.ensureHasClaim(identity, 'allowd_to_read_data');
 
 // Place protected code here.
 (...)
 ```
 
-## Usage of the IAM
+## Usage
 
-At its core, the IAM implementation is simple; by using the IAM service's
-`ensureHasClaim()` method you will either:
+Using IAM is simple. You can use `ensureHasClaim` to verify any claim for any identity.
 
-1. Get an Forbidden Error
-
-   A 403 will be the most common case for this; it resembles simply, that the
-   identity and the required claim have no association.
+You'll get one of the following results:
 
 1. Get an Unauthorized Error
 
-   A 401 will be emitted, if the identity is not known to the authority or the
+   A 401 will be thrown, if the identity is not known to the authority or the
    token is invalid/expired/etc.
 
-2. Get Nothing, if the claim and identity match.
+2. Get a Forbidden Error
 
-   A 204, which resembles a happy path; if you get to the code behind
-   `iamService.ensureHasClaim()`, you have clearance to perform the
-   desired operations.
+   A 403 will be thrown, if the given identity does not have the given claim.
+
+3. Get Nothing, if the identity has the given claim.
+
+   A 204, which indicates that the identity has the given claim.
 
 ## Configuration
 
-The IAM service needs some minor configurations; it needs to know:
+The IamService needs some minor configurations; it needs to know:
 
 1. Its authority.
 1. The client secret.
