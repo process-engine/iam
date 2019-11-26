@@ -64,7 +64,15 @@ export class IAMService implements IIAMService {
     const userHasClaim = await this.checkIfUserHasClaim(identity, claimName, claimValue);
 
     if (!userHasClaim) {
-      throw new ForbiddenError('Identity does not have the requested claim!');
+      const error = new ForbiddenError('Identity does not have the requested claim!');
+      error.additionalInformation = {
+        identity: identity,
+        claim: claimName,
+        claimValue: claimValue,
+      };
+
+      logger.error('Claim check failed!', error);
+      throw error;
     }
   }
 
