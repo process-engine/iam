@@ -1,8 +1,5 @@
 {
   "name": "@process-engine/iam",
-  "publishConfig": {
-    "registry": "https://www.npmjs.com"
-  },
   "version": "1.7.3",
   "description": "Contains the process engines' IAM related functions.",
   "license": "MIT",
