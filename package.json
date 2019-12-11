@@ -1,6 +1,6 @@
 {
   "name": "@process-engine/iam",
-  "version": "1.7.4",
+  "version": "1.7.4-alpha.1",
   "description": "Contains the process engines' IAM related functions.",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
