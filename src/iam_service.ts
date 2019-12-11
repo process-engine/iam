@@ -8,6 +8,9 @@ import {CacheValue, ClaimCheckCache} from './claim_check_cache';
 
 const logger = Logger.createLogger('processengine:iam:iam_service');
 
+// No logs will be created for any of the claims listed in here.
+const optionalclaims = ['can_manage_process_instances'];
+
 export class IAMService implements IIAMService {
 
   private httpClient: IHttpClient;
@@ -71,7 +74,10 @@ export class IAMService implements IIAMService {
         claimValue: claimValue,
       };
 
-      logger.error('Claim check failed!', error);
+      const isRequiredClaim = !optionalclaims.some((claim) => claim === claimName);
+      if (isRequiredClaim) {
+        logger.error('Claim check failed!', error);
+      }
       throw error;
     }
   }
